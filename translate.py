@@ -75,11 +75,11 @@ def parse_arguments(arguments):
     while len(arguments) > 0:
         token = arguments.pop(0)
         
-        if token == 'from':
+        if token == 'from' and expect != 'subject':
             expect = 'source'
             continue
         
-        if token == 'to':
+        if token == 'to' and expect != 'subject':
             expect = 'target'
             continue
 

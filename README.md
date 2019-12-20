@@ -49,3 +49,16 @@ https://translate.google.com/?view=home&op=translate&sl=auto&tl=ES&text=What%3F
 
 Copied to clipboard
 ```
+
+Instead of writing text, you can specify a text file to be translated:
+
+```
+$ cat song.txt
+Ech wëll net schaffen,
+ech wëll net frühstücken,
+ech wëll nëmmen vergiessen,
+an duerno fëmmen ech!
+$ translate to french: song.txt
+French:
+Je ne veux pas travailler,je ne veux pas déjeuner,je veux juste oublier,et puis je fume!
+```
