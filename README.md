@@ -40,7 +40,7 @@ French:
 Anglais, enculé, tu le parles?
 ```
 
-You can opt to just receive the google translator links.
+You can opt to just receive the google translator links and/or copy the output to the clipboard.
 
 ```
 $ translate to spanish: What? -l -c
