@@ -2,9 +2,15 @@ import sys
 import click
 import pyperclip
 import json
+import requests
+import pretty_errors
+import urllib
+import warnings
 
 from os import path
-from urllib import parse
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from requests import RequestsDependencyWarning
 
 settings = dict(
     allow_extra_args=True
@@ -28,11 +34,6 @@ def translate(context, copy_to_clipboard, links, filename=None, text=None):
     else:
         text = subject
 
-    if not links:
-        print('Can only give you links for now...')
-        print()
-        links = True
-
     if source is None:
         source = 'auto'
 
@@ -40,11 +41,16 @@ def translate(context, copy_to_clipboard, links, filename=None, text=None):
 
     translations = []
     for target in targets:
-
         target_code = languages[target.lower().capitalize()]
 
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore", category=RequestsDependencyWarning)
+            translation_link = google_translate_link.format(source, target_code, urllib.parse.quote_plus(text))
+
         if links:
-            translation = google_translate_link.format(source, target_code, parse.quote(text))
+            translation = translation_link
+        else:
+            translation = get_translation(translation_link)
         
         translations.append((target.capitalize(), translation))
 
@@ -94,6 +100,25 @@ def parse_arguments(arguments):
             continue
 
     return (source, targets, subject)
+
+def get_translation(link):
+    """user_agent = "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:41.0) Gecko/20100101 Firefox/41.0"
+
+    response = requests.get(link, headers={
+        'User-Agent': user_agent
+    })
+
+    content = response.content"""
+
+    driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver')
+    driver.get(link)
+
+    content = driver.page_source
+
+    soup = BeautifulSoup(content, features='lxml')
+    container = soup.find(attrs={'class': 'tlid-translation translation'})
+
+    return container.text
     
 
 if __name__ == '__main__':
